@@ -1,8 +1,10 @@
 training:
     n_epochs: 240
     optimizer: 'SGD'
-    batch_size: 64
+    batch_size_training: 128
+    batch_size_testing: 64
     learning_rate: .1
     learning_update_gamma: 0.95 
     learning_schedule: 'expo' #[expo, None]
                               #expo: lr = lr*gamma**epoch
+    class_weight: .9

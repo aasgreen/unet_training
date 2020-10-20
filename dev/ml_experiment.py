@@ -172,8 +172,8 @@ class Experiment():
         #set devic
         self.device = (torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'))
         print(f"Training on device {self.device}.")
-
-        self.loss_fn = nn.BCEWithLogitsLoss(pos_weight = torch.FloatTensor([10]).to(self.device))
+        self.class_weight = self.cfg['training']['class_weight']
+        self.loss_fn = nn.BCEWithLogitsLoss(pos_weight = torch.FloatTensor([self.class_weight]).to(self.device))
         #load model and experiment parameters
         self.n_epochs = self.cfg['training']['n_epochs']
         self.optimizer = self.cfg['training']['optimizer']
@@ -207,9 +207,10 @@ class Experiment():
         self.lr_schedule = scheduler_dict[self.cfg['training']['learning_schedule']]
         self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, self.lr_schedule)
 
-        self.batch_size = self.cfg['training']['batch_size']
-        self.train_loader = torch.utils.data.DataLoader(self.trainSet, batch_size = self.batch_size, shuffle = True)
-        self.test_loader = torch.utils.data.DataLoader(self.testSet, batch_size = self.batch_size, shuffle = False)
+        self.batch_size_training = self.cfg['training']['batch_size_training']
+        self.batch_size_testing = self.cfg['training']['batch_size_testing']
+        self.train_loader = torch.utils.data.DataLoader(self.trainSet, batch_size = self.batch_size_training, shuffle = True)
+        self.test_loader = torch.utils.data.DataLoader(self.testSet, batch_size = self.batch_size_testing, shuffle = False)
         self.total_epochs = 0 #keep a log of the total epochs trained
 
     def gen_hash(self, unet_file, param_file):
